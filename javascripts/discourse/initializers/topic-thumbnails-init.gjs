@@ -41,6 +41,16 @@ export default apiInitializer((api) => {
     </template>
   );
 
+  // 为 blog-style 布局在话题列表项开头插入用户信息
+  api.renderInOutlet(
+    "topic-list-item-header",
+    <template>
+      {{#if ttService.displayBlogStyle}}
+        <TopicListThumbnail @topic={{@outletArgs.topic}} />
+      {{/if}}
+    </template>
+  );
+
   api.registerValueTransformer("topic-list-item-mobile-layout", ({ value }) => {
     if (ttService.enabledForRoute && !ttService.displayList) {
       // Force the desktop layout

@@ -25,6 +25,15 @@ export default class TopicListThumbnail extends Component {
     return !!this.topic.thumbnails;
   }
 
+  get imageUrls() {
+    // TODO：系统返回多张图片
+    if (this.topic.thumbnails.length > 0) {
+      return [this.topic.thumbnails[0].url, this.topic.thumbnails[0].url, this.topic.thumbnails[0].url];
+    }
+
+    return [];
+  }
+
   get srcSet() {
     const srcSetArray = [];
 
@@ -82,85 +91,145 @@ export default class TopicListThumbnail extends Component {
       : this.topic.get("lastUnreadUrl");
   }
 
+  get createdBy() {
+    // posters 数组中的第一个通常是创建者
+    if (this.topic.posters && this.topic.posters.length > 0) {
+      return this.topic.posters[0];
+    }
+
+    return null;
+  }
+
+  get avatarUrl() {
+    if (!this.createdBy) return null;
+    let avatarTemplate = this.createdBy.user.avatar_template 
+    
+    if (!avatarTemplate) return null;
+    
+    // Discourse avatar template format: {size}/{version}.png
+    // 需要替换 {size} 为实际大小
+    if (avatarTemplate.includes("{size}")) {
+      return avatarTemplate.replace("{size}", "40");
+    }
+    return avatarTemplate;
+  }
+
+  get username() {
+    return this.topic.posters[0].user.username
+  }
+
+  get createdAt() {
+    // 尝试多种方式获取创建时间
+    return (
+      this.topic.created_at || (this.topic.get && this.topic.get("created_at"))
+    );
+  }
+
   <template>
-    <div
-      class={{concatClass
-        "topic-list-thumbnail"
-        (if this.hasThumbnail "has-thumbnail" "no-thumbnail")
-      }}
-    >
-      <a href={{this.url}} role="img" aria-label={{this.topic.title}}>
-        {{#if this.hasThumbnail}}
-          <img
-            class="background-thumbnail"
-            src={{this.fallbackSrc}}
-            srcset={{this.srcSet}}
-            width={{this.width}}
-            height={{this.height}}
-            loading="lazy"
-            alt=""
-          />
-          <img
-            class="main-thumbnail"
-            src={{this.fallbackSrc}}
-            srcset={{this.srcSet}}
-            width={{this.width}}
-            height={{this.height}}
-            loading="lazy"
-            alt=""
-          />
-        {{else}}
-          <div class="thumbnail-placeholder">
-            {{dIcon settings.placeholder_icon}}
-          </div>
-        {{/if}}
-      </a>
-    </div>
-
-    {{#if this.topicThumbnails.showLikes}}
-      <div class="topic-thumbnail-likes">
-        {{dIcon "heart"}}
-        <span class="number">
-          {{this.topic.like_count}}
-        </span>
-      </div>
-    {{/if}}
-
     {{#if this.topicThumbnails.displayBlogStyle}}
-      <div class="topic-thumbnail-blog-data">
-        <div class="topic-thumbnail-blog-data-views">
-          {{dIcon "eye"}}
-          <span class="number">
-            {{this.topic.views}}
-          </span>
+      {{! Blog style 布局：顶部用户信息 + 底部图片 }}
+      {{! 顶部：用户信息和互动指标 }}
+      <div class="topic-thumbnail-blog-header">
+        <div class="topic-thumbnail-blog-user-info">
+          <div class="topic-thumbnail-blog-avatar">
+          {{#if this.avatarUrl}}
+              <img src={{this.avatarUrl}} alt={{this.username}} />
+          {{else}}
+              {{dIcon "user"}}
+          {{/if}}
+          </div>
+          <div class="topic-thumbnail-blog-user-details">
+            <div class="topic-thumbnail-blog-username">
+                {{this.username}}
+            </div>
+            {{#if this.createdAt}}
+              <div class="topic-thumbnail-blog-date">
+                {{~formatDate this.createdAt format="medium" noTitle="true"~}}
+              </div>
+            {{/if}}
+          </div>
         </div>
-        <div class="topic-thumbnail-blog-data-likes">
+        
+        <div class="topic-thumbnail-blog-engagement">
+          <div class="topic-thumbnail-blog-engagement-item">
+            {{dIcon "comment"}}
+            <span class="number">
+              {{this.topic.posts_count}}
+            </span>
+          </div>
+          <div class="topic-thumbnail-blog-engagement-item">
+            {{dIcon "heart"}}
+            <span class="number">
+              {{this.topic.like_count}}
+            </span>
+          </div>
+        </div>
+      </div>
+ 
+      {{! 底部：图片区域 }}
+      {{#if this.hasThumbnail}}
+        <div class="topic-thumbnail-blog-images">
+          {{#each this.imageUrls as |imageUrl|}}
+            <div class="topic-list-thumbnail has-thumbnail">
+            <a href={{this.url}} role="img" aria-label={{this.topic.title}}>
+              <img
+                class="main-thumbnail"
+                src={{this.fallbackSrc}}
+                srcset={{this.imageUrl}}
+                width={{this.width}}
+                height={{this.height}}
+                loading="lazy"
+                alt=""
+              />
+            </a>
+            </div>
+          {{/each}}
+        </div>
+      {{/if}}
+    {{else}}
+      {{! 其他布局模式：保持原有结构 }}
+      <div
+        class={{concatClass
+          "topic-list-thumbnail"
+          (if this.hasThumbnail "has-thumbnail" "no-thumbnail")
+        }}
+      >
+        <a href={{this.url}} role="img" aria-label={{this.topic.title}}>
+          {{#if this.hasThumbnail}}
+            <img
+              class="background-thumbnail"
+              src={{this.fallbackSrc}}
+              srcset={{this.srcSet}}
+              width={{this.width}}
+              height={{this.height}}
+              loading="lazy"
+              alt=""
+            />
+            <img
+              class="main-thumbnail"
+              src={{this.fallbackSrc}}
+              srcset={{this.srcSet}}
+              width={{this.width}}
+              height={{this.height}}
+              loading="lazy"
+              alt=""
+            />
+          {{else}}
+            <div class="thumbnail-placeholder">
+              {{dIcon settings.placeholder_icon}}
+            </div>
+          {{/if}}
+        </a>
+      </div>
+
+      {{#if this.topicThumbnails.showLikes}}
+        <div class="topic-thumbnail-likes">
           {{dIcon "heart"}}
           <span class="number">
             {{this.topic.like_count}}
           </span>
         </div>
-        <div class="topic-thumbnail-blog-data-comments">
-          {{dIcon "comment"}}
-          <span class="number">
-            {{this.topic.reply_count}}
-          </span>
-        </div>
-        <div
-          class={{concatClass
-            "topic-thumbnail-blog-data-activity"
-            "activity"
-            (coldAgeClass
-              this.topic.createdAt startDate=this.topic.bumpedAt class=""
-            )
-          }}
-          title={{this.topic.bumpedAtTitle}}
-        >
-          <a class="post-activity" href={{this.topic.lastPostUrl}}>
-            {{~formatDate this.topic.bumpedAt format="tiny" noTitle="true"~}}
-          </a>
-        </div>
-      </div>
+      {{/if}}
     {{/if}}
   </template>
 }

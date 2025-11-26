@@ -334,94 +334,284 @@
 }
 
 .topic-thumbnails-blog-style-grid {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+
   .num.posts-map {
     display: none;
   }
 
   .topic-list-body {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(48%, 1fr));
-    grid-column-gap: 1.5em;
-    grid-row-gap: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
     border: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   .topic-list-item {
     height: auto;
-    grid-template-rows: 200px auto min-content min-content;
-    grid-template-areas:
-      "image image image"
-      "content content content"
-      "data data data"
-      "activity activity activity";
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    background-color: var(--secondary);
+    border: 1px solid var(--primary-low);
+    border-radius: 0.5em;
+    overflow: hidden;
+    padding: 1em;
+    position: relative;
+    gap: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0; // 防止 grid 子元素溢出
   }
 
+  // 确保缩略图列包含所有内容，并放在第一行
+  .topic-list-item .thumbnail {
+    width: 100%;
+    display: contents; // 让缩略图列的内容直接成为 grid 的子元素
+    grid-row: 1;
+  }
+
+  // 用户信息头部在第一行
+  .topic-thumbnail-blog-header {
+    grid-row: 1;
+  }
+
+  // 标题在第二行
   .main-link {
-    grid-area: content;
+    grid-row: 2;
+  }
+
+  // 摘要在第三行
+  .topic-excerpt {
+    grid-row: 3;
+  }
+
+  // 图片在第四行
+  .topic-thumbnail-blog-images {
+    grid-row: 4;
+  }
+
+  // 顶部区域：用户信息和互动指标
+  .topic-thumbnail-blog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1em;
+    padding-bottom: 0.75em;
+    border-bottom: 1px solid var(--primary-low);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0; // 防止 flex 子元素溢出
+  }
+
+  .topic-thumbnail-blog-user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    flex: 1;
+    min-width: 0; // 防止 flex 子元素溢出
+    overflow: hidden;
+  }
+
+  .topic-thumbnail-blog-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background-color: var(--primary-low);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .d-icon {
+      width: 24px;
+      height: 24px;
+      color: var(--primary-medium);
+    }
+  }
+
+  .topic-thumbnail-blog-user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    min-width: 0; // 防止文本溢出
+    overflow: hidden;
+  }
+
+  .topic-thumbnail-blog-username {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: var(--font-up-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .topic-thumbnail-blog-date {
+    font-size: var(--font-down-1);
+    color: var(--primary-medium);
+  }
+
+  .topic-thumbnail-blog-engagement {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    flex-shrink: 0;
+  }
+
+  .topic-thumbnail-blog-engagement-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--primary-medium);
+    font-size: var(--font-down-1);
+
+    .d-icon {
+      font-size: var(--font-0);
+    }
+
+    .number {
+      font-weight: 600;
+    }
+  }
+
+  // 内容区域：标题和正文（在话题列表项中，不在缩略图组件中）
+  .main-link {
+    grid-row: 2;
+    margin-bottom: 1em;
+    padding: 0 !important;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0; // 防止 grid 子元素溢出
+    overflow: hidden;
 
     .docs-topic-link {
       display: unset;
     }
 
     .link-top-line {
-      color: var(--tertiary);
-    }
-  }
-
-  .link-bottom-line {
-    display: block;
-
-    .badge-wrapper {
-      display: none;
+      color: var(--primary);
+      font-size: var(--font-up-1);
+      font-weight: 600;
+      margin-bottom: 0.5em;
+      overflow: hidden;
+      word-wrap: break-word;
+      word-break: break-word;
     }
   }
 
   .topic-excerpt {
+    grid-row: 3;
     display: block;
     font-weight: normal;
+    color: var(--primary-medium);
+    font-size: var(--font-0);
+    line-height: 1.5;
+    margin-bottom: 1em;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0; // 防止 grid 子元素溢出
+    overflow: hidden;
+    word-wrap: break-word;
+    word-break: break-word;
   }
 
-  .topic-thumbnail-blog-data {
-    grid-area: data;
+  .link-bottom-line {
+    display: none;
+  }
+
+  // 图片区域：多图横向排列
+  .topic-thumbnail-blog-images {
     display: flex;
-    align-items: flex-start;
-    gap: 1em;
+    gap: 0.5em;
+    margin-top: 1em;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0; // 防止 grid 子元素溢出
+  }
+
+  .topic-list-thumbnail {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+    float: none;
+    border-radius: 0.5em;
+    overflow: hidden;
+    background-color: var(--primary-low);
+    border: 1px solid var(--primary-low);
+    aspect-ratio: 1;
+    position: relative;
+    box-sizing: border-box;
+    min-width: 0; // 防止 grid 子元素溢出
+
+    &::after {
+      display: none;
+    }
+
+    .background-thumbnail {
+      display: none;
+    }
+
+    .main-thumbnail {
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: relative;
+      display: block;
+    }
+
+    .thumbnail-placeholder {
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+    }
+  }
+
+  // 如果只有一张图片，不显示网格
+  .topic-thumbnail-blog-images:has(.topic-list-thumbnail:only-child) {
+    grid-template-columns: 1fr;
+  }
+
+  // 隐藏原有的数据区域
+  .topic-thumbnail-blog-data {
+    display: none;
   }
 
   .topic-thumbnail-blog-data-activity {
-    display: block;
+    display: none;
   }
 
   .topic-list-data:last-of-type {
     display: none;
   }
 
-  .topic-thumbnail-blog-data-likes,
-  .topic-thumbnail-blog-data-comments,
-  .topic-thumbnail-blog-data-views,
-  .topic-thumbnail-blog-data-activity {
-    grid-area: likes;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    color: var(--primary-low-mid);
-    width: auto;
-
-    .number {
-      font-size: var(--font-down-1);
-      font-weight: bold;
-    }
-
-    .d-icon {
-      font-size: var(--font-down-1);
-      margin-right: 0.5em;
-    }
-
-    a {
-      color: var(--primary-low-mid);
-      font-size: var(--font-down-1);
-      font-weight: bold;
-    }
+  .activity,
+  .posters,
+  .views,
+  .num.activity {
+    display: none;
   }
 }
 
