@@ -27,12 +27,8 @@ export default class TopicListThumbnail extends Component {
 
   constructor() {
     super(...arguments);
-    // 如果是 blog-style 模式，延迟加载图片（避免同时发起大量请求）
     if (this.topicThumbnails.displayBlogStyle) {
-      // 使用 setTimeout 延迟加载，让组件先渲染（增加到 300ms）
-      setTimeout(() => {
-        this.loadImages();
-      }, 300);
+      this.loadImages();
     }
   }
 
@@ -49,7 +45,8 @@ export default class TopicListThumbnail extends Component {
     // blog-style 模式：从详情中加载图片
     if (this.topicThumbnails.displayBlogStyle) {
       const topicId = this.topic.id || this.topic.get?.("id");
-      if (topicId) {
+      const imageUrl = this.topic.image_url;
+      if (topicId && imageUrl) {
         const images = await this.contentLoader.loadTopicImages(topicId);
         this.extractedImages = images;
       }

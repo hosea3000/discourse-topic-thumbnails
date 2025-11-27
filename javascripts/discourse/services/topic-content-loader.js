@@ -12,7 +12,7 @@ export default class TopicContentLoaderService extends Service {
   // 最大并发数（减少到 1，避免过快）
   maxConcurrent = 1;
   // 请求间隔（毫秒，增加到 500ms）
-  requestDelay = 2000;
+  requestDelay = 1000;
   // 缓存已加载的图片（包含过期时间）
   imageCache = new Map();
   // 缓存过期时间（毫秒），默认 5 分钟
