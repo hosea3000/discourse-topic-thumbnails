@@ -212,8 +212,21 @@ export default class TopicListThumbnail extends Component {
     return avatarTemplate;
   }
 
+  get posts_count() {
+    return this.topic.posts_count - 1;
+  }
+
   get username() {
     return this.topic.posters[0].user.username
+  }
+
+  get userUrl() {
+    // 获取用户详情页 URL
+    const username = this.username;
+    if (username) {
+      return `/u/${username}`;
+    }
+    return "#";
   }
 
   get createdAt() {
@@ -230,17 +243,21 @@ export default class TopicListThumbnail extends Component {
       {{! 使用 modifier 设置 Intersection Observer，监听 header 元素（第一个可见元素）}}
       <div {{this.setupIntersectionObserver}} class="topic-thumbnail-blog-header">
         <div class="topic-thumbnail-blog-user-info">
-          <div class="topic-thumbnail-blog-avatar">
-          {{#if this.avatarUrl}}
-              <img src={{this.avatarUrl}} alt={{this.username}} />
-          {{else}}
-              {{dIcon "user"}}
-          {{/if}}
-          </div>
-          <div class="topic-thumbnail-blog-user-details">
-            <div class="topic-thumbnail-blog-username">
-                {{this.username}}
+          <a href={{this.userUrl}} class="topic-thumbnail-blog-avatar-link">
+            <div class="topic-thumbnail-blog-avatar">
+            {{#if this.avatarUrl}}
+                <img src={{this.avatarUrl}} alt={{this.username}} />
+            {{else}}
+                {{dIcon "user"}}
+            {{/if}}
             </div>
+          </a>
+          <div class="topic-thumbnail-blog-user-details">
+            <a href={{this.userUrl}} class="topic-thumbnail-blog-username-link">
+              <div class="topic-thumbnail-blog-username">
+                  {{this.username}}
+              </div>
+            </a>
             {{#if this.createdAt}}
               <div class="topic-thumbnail-blog-date">
                 {{~formatDate this.createdAt format="medium" noTitle="true"~}}
@@ -253,7 +270,7 @@ export default class TopicListThumbnail extends Component {
           <div class="topic-thumbnail-blog-engagement-item">
             {{dIcon "comment"}}
             <span class="number">
-              {{this.topic.posts_count}}
+              {{this.posts_count}}
             </span>
           </div>
           <div class="topic-thumbnail-blog-engagement-item">

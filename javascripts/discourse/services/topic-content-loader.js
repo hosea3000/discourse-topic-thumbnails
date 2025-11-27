@@ -27,8 +27,36 @@ export default class TopicContentLoaderService extends Service {
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
     const images = tempDiv.querySelectorAll("img");
-    const imageUrls = [];
 
+    // 首先检查是否有 alt 包含"封面图"的图片
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i];
+      const alt = img.getAttribute("alt") || "";
+      
+      if (alt.includes("封面图")) {
+        const src = img.getAttribute("src") || img.getAttribute("data-src");
+        if (src) {
+          let imageUrl = src;
+          // 处理相对路径
+          if (src.startsWith("/")) {
+            imageUrl = window.location.origin + src;
+          }
+
+          // 排除表情符号、图标和头像
+          if (
+            !imageUrl.includes("/images/emoji/") &&
+            !imageUrl.includes("/images/") &&
+            !imageUrl.includes("avatar") &&
+            !imageUrl.includes("user_avatar")
+          ) {
+            return [imageUrl]; // 直接返回封面图
+          }
+        }
+      }
+    }
+
+    // 如果没有找到封面图，按原来的逻辑返回最多 maxImages 张图片
+    const imageUrls = [];
     for (let i = 0; i < Math.min(images.length, maxImages); i++) {
       const img = images[i];
       const src = img.getAttribute("src") || img.getAttribute("data-src");
