@@ -522,7 +522,6 @@
     box-sizing: border-box;
     min-width: 0;
     overflow: hidden;
-    margin-bottom: 1em;
     padding: 0;
   }
 
@@ -578,6 +577,11 @@
     min-width: 0; // 防止 flex 子元素溢出
   }
 
+  // 只有一张图片时，父容器靠左显示
+  .topic-thumbnail-blog-images:has(.topic-list-thumbnail:only-child) {
+    justify-content: flex-start; // 靠左显示
+  }
+
   .topic-thumbnail-blog-images .topic-list-thumbnail {
     flex: 1;
     min-width: 0; // 允许 flex 子元素收缩
@@ -588,9 +592,43 @@
     overflow: hidden;
     background-color: var(--primary-low);
     border: 1px solid var(--primary-low);
-    aspect-ratio: 1;
+    aspect-ratio: 1; // 多张图片时保持正方形
     position: relative;
     box-sizing: border-box;
+  }
+
+  // 只有一张图片时，直接展示原图，去掉背景，不铺满
+  .topic-thumbnail-blog-images .topic-list-thumbnail:only-child {
+    aspect-ratio: unset; // 移除固定比例
+    height: auto; // 高度自适应
+    background-color: transparent; // 去掉背景色
+    border: none; // 去掉边框
+    border-radius: 0.5em; // 设置4个角的圆角
+    overflow: hidden; // 裁剪圆角
+    display: flex; // 使用 flex 布局
+    justify-content: flex-start; // 靠左显示
+    align-items: center; // 垂直居中
+    flex: 0 0 auto; // 不拉伸，按内容大小
+  }
+
+  // 单张图片时，图片按原始比例显示，不铺满
+  .topic-thumbnail-blog-images .topic-list-thumbnail:only-child .main-thumbnail {
+    object-fit: contain; // 完整显示，不裁剪
+    width: auto; // 宽度按原图
+    height: auto; // 高度按原图
+    max-width: 100%; // 不超过容器宽度
+    max-height: 100%; // 不超过容器高度
+    display: block;
+    border-radius: 0.5em; // 设置4个角的圆角
+  }
+
+  // 单张图片时，确保链接容器不限制图片
+  .topic-thumbnail-blog-images .topic-list-thumbnail:only-child > a {
+    display: flex; // 使用 flex 布局
+    justify-content: flex-start; // 靠左显示
+    align-items: center; // 垂直居中
+    height: auto;
+    background: transparent; // 去掉链接背景
   }
 
   .topic-list-thumbnail {
