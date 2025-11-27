@@ -635,11 +635,11 @@
 
   // 单张图片时，图片按原始比例显示，不铺满
   .topic-thumbnail-blog-images .topic-list-thumbnail:only-child .main-thumbnail {
-    object-fit: contain; // 完整显示，不裁剪
+    object-fit: cover; // 完整显示，不裁剪
     width: auto; // 宽度按原图
     height: auto; // 高度按原图
     max-width: 100%; // 不超过容器宽度
-    max-height: 100%; // 不超过容器高度
+    max-height: 350px; // 不超过容器高度
     display: block;
     border-radius: 0.5em; // 设置4个角的圆角
   }
